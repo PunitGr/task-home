@@ -5,12 +5,12 @@ import { createStore } from "redux";
 import { Provider } from "react-redux";
 
 import App from "./components/App";
-import { member } from "./reducers/member";
+import member from "./reducers/member";
 
 let store = createStore(member);
 
 render(
-    <Provider>
+    <Provider store={store}>
         <App />
     </Provider>,
     document.getElementById("app")
