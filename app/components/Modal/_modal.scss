@@ -39,6 +39,10 @@
             outline: none;
             box-shadow: none;
         }
+
+        @media all and (max-width: 480px) {
+            padding: 12px 14px;
+        }
     }
 
     @include element("radio") {
