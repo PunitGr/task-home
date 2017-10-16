@@ -1,10 +1,9 @@
 // @flow
 import React from "react";
+import ListScreen from "./ListScreen";
 
 const App = () => (
-    <div>
-        Hello World
-    </div>
+    <ListScreen />
 );
 
 export default App;
