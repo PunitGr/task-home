@@ -16,10 +16,10 @@ To run it on dev server run `yarn start`. The dev server will be live on [http:/
 ## Screenshot
 
 ### List Screen
-![List Screen](screenshot/listscreen.png)
+![List Screen](screenshots/listscreen.png)
 
 ### Add Screen
-![Add Screen](screenshot/addscreen.png)
+![Add Screen](screenshots/addscreen.png)
 
 ### Edit Screen
-![Edit Screen](screenshot/editscreen.png)
+![Edit Screen](screenshots/editscreen.png)
