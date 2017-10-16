@@ -5,9 +5,9 @@ import { createStore } from "redux";
 import { Provider } from "react-redux";
 
 import App from "./components/App";
-import member from "./reducers/member";
+import membersReducer from "./reducers/membersReducer";
 
-let store = createStore(member);
+const store = createStore(membersReducer);
 
 render(
     <Provider store={store}>
