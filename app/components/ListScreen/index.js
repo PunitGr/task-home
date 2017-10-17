@@ -4,57 +4,39 @@ import { connect } from "react-redux";
 
 import Modal from "../Modal";
 import Member from "../Member";
+import { showStatus } from "../../actions";
 
 type Props = {
-    members: Object
+    members: Object,
+    editId: ?number,
+    show: ?boolean,
+    showStatus: Function
 };
 
-type State = {
-    show: boolean,
-    edit: boolean,
-    id: ?number
-};
-
-class ListScreen extends Component<Props, State> {
-    constructor(props: Props) {
-        super(props);
-        this.state = {
-            show: false,
-            edit: false,
-            id: undefined
-        };
-    }
-    state: State;
-
-    handleShow = (show: boolean) => {
-        this.setState({
-            show
-        });
-    }
-
-    handleEdit = (edit: boolean, id: number) => {
-        this.setState({
-            edit,
-            id
-        });
-    }
-
+class ListScreen extends Component<Props> {
     renderMembers = () => {
         const { members } = this.props;
         if (members) {
             const keys = Object.keys(members);
             if (keys.length) {
-                return keys.map(id => <Member data={members[id]} id={id} key={id} onEditChange={this.handleEdit} />);
+                return keys.map(id => <Member data={members[id]} id={id} key={id} />);
             }
         }
         return null;
     }
 
     render() {
-        const { members } = this.props;
+        const { members, editId, show } = this.props;
         let len;
         let modalElement;
         let memberId = 1;
+        const data = {
+            firstName: "",
+            lastName: "",
+            role: "regular",
+            phoneNumber: "",
+            email: ""
+        };
 
         if (members) {
             len = Object.keys(members).length;
@@ -63,28 +45,26 @@ class ListScreen extends Component<Props, State> {
 
         modalElement = (<Modal
             id={memberId}
-            show={this.state.show}
-            onShowChange={this.handleShow}
+            show={show}
+            data={data}
         />);
 
-        if (this.state.edit) {
+        if (editId) {
             modalElement = (<Modal
-                id={this.state.id}
-                edit={this.state.edit}
-                onEditChange={this.handleEdit}
-                data={members[this.state.id]}
+                id={editId}
+                data={members[editId]}
             />);
         }
 
         return (
             <div>
                 {
-                    this.state.show || this.state.edit
+                    show || editId != null
                         ? modalElement
                         : (
                             <div className="screen">
                                 <div style={{ display: "flex", flexDirection: "row-reverse" }}>
-                                    <a onClick={() => { this.setState({ show: !this.state.show }); }} className="icon">
+                                    <a onClick={() => { this.props.showStatus(!show); }} className="icon">
                                         <i className="fa fa-plus" aria-hidden="true" />
                                     </a>
                                 </div>
@@ -113,7 +93,13 @@ class ListScreen extends Component<Props, State> {
 }
 
 const mapStateToProps = state => ({
-    members: state
+    members: state.members,
+    editId: state.editId,
+    show: state.show
 });
 
-export default connect(mapStateToProps, null)(ListScreen);
+const mapDispatchToProps = dispatch => ({
+    showStatus: show => dispatch(showStatus(show))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ListScreen);

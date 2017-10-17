@@ -1,16 +1,19 @@
 // @flow
 import React from "react";
+import { connect } from "react-redux";
+
+import { editMember } from "../../actions";
 
 type Props = {
-    onEditChange: Function,
+    editMember: Function,
     data: Object,
     id: number
 };
 
-export default (props: Props) => {
+const Member = (props: Props) => {
     const { data } = props;
     return (
-        <div onClick={() => { props.onEditChange(true, props.id); }} role="button">
+        <div onClick={() => { props.editMember(props.id); }}>
             <div className="member">
                 <div className="round-image" />
                 <div className="member__element">
@@ -23,3 +26,9 @@ export default (props: Props) => {
         </div>
     );
 };
+
+const mapDispatchToProps = dispatch => ({
+    editMember: editId => dispatch(editMember(editId))
+});
+
+export default connect(null, mapDispatchToProps)(Member);

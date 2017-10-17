@@ -2,93 +2,69 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 
-import { addMember, deleteMember } from "../../actions";
+import {
+    addMember,
+    deleteMember,
+    editMember,
+    showStatus
+} from "../../actions";
 
 type Props = {
     addMember: Function,
     deleteMember: Function,
-    onShowChange: Function,
-    onEditChange: Function,
-    id: ?number,
+    editMember: Function,
+    showStatus: Function,
     show: ?boolean,
-    edit: ?boolean,
-    data: ?Object
+    editId: ?boolean,
+    data: ?Object,
+    id: ?number
 };
 
-type State = {
-    firstName: string,
-    lastName: string,
-    role: string,
-    phoneNumber: string,
-    email: string
-};
-
-class Modal extends Component<Props, State> {
-    constructor(props: Props) {
-        super(props);
-        const { data } = props;
-        this.state = {
-            firstName: data && data.firstName ? data.firstName : "",
-            lastName: data && data.lastName ? data.lastName : "",
-            role: data && data.role ? data.role : "regular",
-            phoneNumber: data && data.phoneNumber ? data.phoneNumber : "",
-            email: data && data.email ? data.email : ""
-        };
-    }
-    state: State;
-
-    handleChange = (e: Event) => {
-        if (e.target instanceof HTMLInputElement) {
-            const { name, value } = e.target;
-            this.setState({
-                [name]: value
-            });
-        }
-    }
-
-    toggleRadio = (role: string) => {
-        this.setState({
-            role
-        });
-    }
+class Modal extends Component<Props> {
+    firstName: ?HTMLInputElement;
+    email: ?HTMLInputElement;
+    lastName: ?HTMLInputElement;
+    role: ?HTMLInputElement;
+    phoneNumber: ?HTMLInputElement;
 
     handleClose = () => {
-        if (this.props.edit) {
-            this.props.onEditChange(false);
+        if (this.props.editId) {
+            this.props.editMember(null);
         } else {
-            this.props.onShowChange(false);
+            this.props.showStatus(false);
         }
     }
 
-    handleSave = () => {
-        const {
-            firstName, lastName, role, phoneNumber, email
-        } = this.state;
 
-        if (firstName !== "" && email !== "" && phoneNumber !== "") {
+    handleSave = () => {
+        if (this.firstName && this.firstName.value !== "" &&
+            this.email && this.email.value !== "" &&
+            this.phoneNumber && this.phoneNumber.value !== "" &&
+            this.role && this.lastName) {
             this.props.addMember(this.props.id, {
-                firstName,
-                lastName,
-                role,
-                phoneNumber,
-                email
+                firstName: this.firstName.value,
+                lastName: this.lastName.value,
+                role: this.role.value,
+                phoneNumber: this.phoneNumber.value,
+                email: this.email.value
             });
         }
 
         if (this.props.show) {
-            this.props.onShowChange(false);
+            this.props.showStatus(false);
         } else {
-            this.props.onEditChange(false);
+            this.props.editMember(null);
         }
     }
 
     handleDelete = () => {
-        this.props.onEditChange(false);
+        this.props.editMember(null);
         this.props.deleteMember(this.props.id);
     }
 
     render() {
-        if (this.props.show || this.props.edit) {
+        const { data } = this.props;
+        if (data && (this.props.show || this.props.editId)) {
             return (
                 <div className="screen">
                     <div style={{ display: "flex", flexDirection: "row-reverse" }}>
@@ -117,60 +93,64 @@ class Modal extends Component<Props, State> {
                         className="input-element"
                         type="text"
                         name="firstName"
-                        onChange={this.handleChange}
+                        ref={node => this.firstName = node}
                         placeholder="First Name"
-                        value={this.state.firstName}
+                        defaultValue={data.firstName}
                     />
                     <input
                         className="input-element"
                         type="text"
                         name="lastName"
-                        onChange={this.handleChange}
+                        ref={node => this.lastName = node}
                         placeholder="Last Name"
-                        value={this.state.lastName}
+                        defaultValue={data.lastName}
                     />
                     <input
                         className="input-element"
                         type="email"
                         name="email"
-                        onChange={this.handleChange}
+                        ref={node => this.email = node}
                         placeholder="Email"
-                        value={this.state.email}
+                        defaultValue={data.email}
                     />
                     <input
                         className="input-element"
                         type="text"
                         name="phoneNumber"
-                        onChange={this.handleChange}
+                        ref={node => this.phoneNumber = node}
                         placeholder="Phone Number"
-                        value={this.state.phoneNumber}
+                        defaultValue={data.phoneNumber}
                     />
                     <hr />
                     <h4>Role</h4>
                     <div className="screen__radio">
-                        <div onClick={() => this.toggleRadio("regular")}>
-                            <label htmlFor="regular-radio" className={this.state.role === "regular" ? "label-highlight" : ""}>
+                        <div>
+                            <label htmlFor="regular">
                                 Regular - Can't delete members
                             </label>
                             <input
+                                id="regular"
                                 className="input-element"
                                 type="radio"
                                 value="regular"
                                 name="role"
-                                checked={this.state.role === "regular"}
+                                ref={node => this.role = node}
+                                defaultChecked={data.role === "regular"}
                             />
                         </div>
                         <hr />
-                        <div onClick={() => this.toggleRadio("admin")}>
-                            <label htmlFor="admin-radio" className={this.state.role === "admin" ? "label-highlight" : ""}>
+                        <div >
+                            <label htmlFor="admin">
                                 Admin - Can delete members
                             </label>
                             <input
+                                id="admin"
                                 className="input-element"
                                 type="radio"
                                 value="admin"
                                 name="role"
-                                checked={this.state.role === "admin"}
+                                ref={node => this.role = node}
+                                defaultChecked={data.role === "admin"}
                             />
                         </div>
                         <hr />
@@ -180,7 +160,7 @@ class Modal extends Component<Props, State> {
                             Save
                         </button>
                         {
-                            this.props.edit
+                            this.props.editId
                                 ? (
                                     <button className="solid-btn solid-btn--ghost" onClick={this.handleDelete}>
                                         Delete
@@ -196,10 +176,16 @@ class Modal extends Component<Props, State> {
     }
 }
 
+const mapStateToProps = state => ({
+    show: state.show,
+    editId: state.editId
+});
 
 const mapDispatchToProps = dispatch => ({
     addMember: (id, value) => dispatch(addMember(id, value)),
-    deleteMember: id => dispatch(deleteMember(id))
+    deleteMember: id => dispatch(deleteMember(id)),
+    showStatus: show => dispatch(showStatus(show)),
+    editMember: editId => dispatch(editMember(editId))
 });
 
-export default connect(null, mapDispatchToProps)(Modal);
+export default connect(mapStateToProps, mapDispatchToProps)(Modal);
