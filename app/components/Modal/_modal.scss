@@ -51,18 +51,11 @@
             flex-direction: row;
             justify-content: space-between;
             align-items: center;
-            cursor: pointer;
 
             label {
                 margin-bottom: 0;
                 font-weight: 400;
-                color: #999;
                 cursor: pointer;
-            }
-
-            .label-highlight {
-                font-weight: 600;
-                color: #000;
             }
 
             input[type="radio"] {
@@ -83,25 +76,18 @@
                     box-shadow: inset 0 0 0 .3em white, 0 0 0 .19em;
                 }
 
-                &:focus {
-                    outline: 0;
-                    border: 0;
-                }
-            }
-
-            &:hover {
-                label {
-                    color: #777;
-                }
-
-                input[type="radio"] {
+                &:hover {
                     &:checked {
                         background: #4E7CF7;
                         color: #4E7CF7;
                     }
-
                     background: #a3bbf9;
                     color: #a3bbf9;
+                }
+
+                &:focus {
+                    outline: 0;
+                    border: 0;
                 }
             }
         }
